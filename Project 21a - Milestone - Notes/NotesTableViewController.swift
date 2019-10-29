@@ -10,7 +10,7 @@ import UIKit
 
 class NotesTableViewController: UITableViewController {
 
-    let notes = [Note]()
+    var notes = [Note]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,19 +19,39 @@ class NotesTableViewController: UITableViewController {
         title = "Notes"
         navigationController?.navigationBar.prefersLargeTitles = true
         
+        loadSavedNotes()
+
+        
         let composeButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(compose))
         let noteCount = UIBarButtonItem(title: "\(notes.count) Notes", style: .done, target: nil, action: nil)
         let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
         toolbarItems = [spacer, noteCount, spacer, composeButton]
+
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        loadSavedNotes()
         
-
-
+        tableView.reloadData()
     }
     
     //MARK: - Private Methods
     
     @objc func compose() {
         performSegue(withIdentifier: "DetailVC", sender: self)
+    }
+    
+    func loadSavedNotes() {
+        if let savedNotes = UserDefaults.standard.object(forKey: "notes") as? Data {
+            let jsonDecoder = JSONDecoder()
+            
+            do {
+                notes = try jsonDecoder.decode([Note].self, from: savedNotes)
+            } catch {
+                print("Could not load data")
+            }
+        }
     }
     
     
@@ -91,14 +111,15 @@ class NotesTableViewController: UITableViewController {
     }
     */
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
+        let vc = segue.destination as! DetailViewController
         // Pass the selected object to the new view controller.
+        vc.notes = notes
     }
-    */
+    
 
 }

@@ -25,11 +25,17 @@ class DetailViewController: UIViewController {
         let deleteNoteButton = UIBarButtonItem(image: UIImage(systemName: "trash"), style:.done, target: self, action: #selector(deleteNote))
         let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
         toolbarItems = [deleteNoteButton, spacer, composeButton]
+        
+        
 
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        let note = Note(title: "Title", text: textView.text)
+        notes.append(note)
+        save()
     }
 
     
