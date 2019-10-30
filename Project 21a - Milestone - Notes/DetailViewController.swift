@@ -37,10 +37,19 @@ class DetailViewController: UIViewController, UITextViewDelegate {
         
     }
     
+
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        print("viewDisappear")
-        
+        saveNote()
+    }
+    
+
+    
+    
+    //MARK: - Private Methods
+    
+    fileprivate func saveNote() {
         if viewingExistingNote {
             //filter the notes array locating note with matching ID, set its text to new text and save.
             notes.filter({$0.id == note.id}).first?.text = textView.text
@@ -65,13 +74,12 @@ class DetailViewController: UIViewController, UITextViewDelegate {
         }
     }
     
-
-    
-    
-    //MARK: - Private Methods
-    
     @objc func compose() {
+        saveNote()
         
+        viewingExistingNote = false
+        textView.text = ""
+        saveNote()
     }
     
     @objc func deleteNote() {
@@ -92,5 +100,18 @@ class DetailViewController: UIViewController, UITextViewDelegate {
             print("Could not save data")
         }
     }
+    
+    
+    //MARK: - Action Methods
+    
+    @IBAction func shareTapped(_ sender: Any) {
+        guard let text = textView.text else { return }
+        
+        let vc = UIActivityViewController(activityItems: [text], applicationActivities: [])
+        vc.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+        present(vc, animated: true)
+    }
+    
+    
 }
 

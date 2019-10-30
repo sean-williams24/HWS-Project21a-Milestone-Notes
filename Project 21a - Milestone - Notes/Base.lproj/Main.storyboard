@@ -83,7 +83,11 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="4ij-oW-b7q">
-                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="XLJ-fj-RWY"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="XLJ-fj-RWY">
+                            <connections>
+                                <action selector="shareTapped:" destination="BYZ-38-t0r" id="sb1-9y-K2i"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="share" destination="XLJ-fj-RWY" id="s3v-yw-8o5"/>
