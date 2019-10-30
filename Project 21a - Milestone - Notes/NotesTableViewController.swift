@@ -71,10 +71,19 @@ class NotesTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "NoteCell", for: indexPath)
         let note = notes[indexPath.row]
+        let date = note.date.description
+        if let subDate = date.components(separatedBy: " ").first {
+            
+            if let range = note.text.range(of: "\n") {
+                let rangeOfString = range.upperBound ..< note.text.endIndex
+                let subtitle = String(note.text[rangeOfString])
+                cell.detailTextLabel?.text = "\(subDate)   \(subtitle)"
+        }
+        }
 
         // Configure the cell...
         cell.textLabel?.text = note.title
-        cell.detailTextLabel?.text = note.text
+
 
         return cell
     }

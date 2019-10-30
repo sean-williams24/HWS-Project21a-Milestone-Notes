@@ -50,7 +50,8 @@ class DetailViewController: UIViewController {
             if let range = textView.text.range(of: "\n") {
                 let rangeOfString = textView.text.startIndex ..< range.upperBound
                 let title = String(textView.text[rangeOfString])
-                let note = Note(title: title, text: textView.text, id: id)
+                
+                let note = Note(title: title, text: textView.text, id: id, date: Date())
                 notes.append(note)
                 save()
             }
