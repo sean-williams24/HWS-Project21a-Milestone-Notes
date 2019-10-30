@@ -9,12 +9,14 @@
 import Foundation
 
 class Note: NSObject, Codable {
-    let title: String
-    let text: String
+    var title: String
+    var text: String
+    let id: String
     
-    init(title: String, text: String) {
+    init(title: String, text: String, id: String) {
         self.title = title
         self.text = text
+        self.id = id
     }
     
 }

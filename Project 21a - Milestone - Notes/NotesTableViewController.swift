@@ -11,6 +11,8 @@ import UIKit
 class NotesTableViewController: UITableViewController {
 
     var notes = [Note]()
+    var note: Note!
+    var viewingExistingNote = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,11 +24,7 @@ class NotesTableViewController: UITableViewController {
         loadSavedNotes()
 
         
-        let composeButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(compose))
-        let noteCount = UIBarButtonItem(title: "\(notes.count) Notes", style: .done, target: nil, action: nil)
-        let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
-        toolbarItems = [spacer, noteCount, spacer, composeButton]
-
+ 
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -34,11 +32,17 @@ class NotesTableViewController: UITableViewController {
         loadSavedNotes()
         
         tableView.reloadData()
+        
+        let composeButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(compose))
+         let noteCount = UIBarButtonItem(title: "\(notes.count) Notes", style: .done, target: nil, action: nil)
+         let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+         toolbarItems = [spacer, noteCount, spacer, composeButton]
     }
     
     //MARK: - Private Methods
     
     @objc func compose() {
+        viewingExistingNote = false
         performSegue(withIdentifier: "DetailVC", sender: self)
     }
     
@@ -75,6 +79,14 @@ class NotesTableViewController: UITableViewController {
         return cell
     }
 
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedNote = notes[indexPath.row]
+        note = selectedNote
+        viewingExistingNote = true
+        performSegue(withIdentifier: "DetailVC", sender: self)
+
+    }
 
     /*
     // Override to support conditional editing of the table view.
@@ -96,12 +108,6 @@ class NotesTableViewController: UITableViewController {
     }
     */
 
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
 
     /*
     // Override to support conditional rearranging of the table view.
@@ -119,6 +125,9 @@ class NotesTableViewController: UITableViewController {
         let vc = segue.destination as! DetailViewController
         // Pass the selected object to the new view controller.
         vc.notes = notes
+        vc.note = note
+        vc.viewingExistingNote = viewingExistingNote
+
     }
     
 
