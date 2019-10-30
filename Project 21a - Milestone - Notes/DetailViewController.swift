@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DetailViewController: UIViewController {
+class DetailViewController: UIViewController, UITextViewDelegate {
     
     @IBOutlet var textView: UITextView!
     @IBOutlet var share: UIBarButtonItem!
@@ -22,7 +22,8 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.isToolbarHidden = false
-        
+        print(notes.count)
+
         
         let composeButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(compose))
         let deleteNoteButton = UIBarButtonItem(image: UIImage(systemName: "trash"), style:.done, target: self, action: #selector(deleteNote))
@@ -38,12 +39,14 @@ class DetailViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        print("viewDisappear")
         
         if viewingExistingNote {
             //filter the notes array locating note with matching ID, set its text to new text and save.
             notes.filter({$0.id == note.id}).first?.text = textView.text
             save()
-        } else {
+            
+        } else if viewingExistingNote == false && !textView.text.isEmpty {
             //Saving new note
             let id = UUID().uuidString
             
@@ -54,9 +57,12 @@ class DetailViewController: UIViewController {
                 let note = Note(title: title, text: textView.text, id: id, date: Date())
                 notes.append(note)
                 save()
+            } else {
+                let note = Note(title: textView.text, text: textView.text, id: id, date: Date())
+                notes.append(note)
+                save()
             }
         }
-        
     }
     
 
@@ -69,7 +75,12 @@ class DetailViewController: UIViewController {
     }
     
     @objc func deleteNote() {
-        
+        for (index, noteToDelete) in notes.enumerated().reversed() {
+            if noteToDelete.id == note.id {
+                notes.remove(at: index)
+            }
+        }
+        navigationController?.popViewController(animated: true)
     }
     
     func save() {
@@ -81,6 +92,5 @@ class DetailViewController: UIViewController {
             print("Could not save data")
         }
     }
-    
 }
 

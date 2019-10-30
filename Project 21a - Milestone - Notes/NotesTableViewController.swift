@@ -34,9 +34,9 @@ class NotesTableViewController: UITableViewController {
         tableView.reloadData()
         
         let composeButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(compose))
-         let noteCount = UIBarButtonItem(title: "\(notes.count) Notes", style: .done, target: nil, action: nil)
-         let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
-         toolbarItems = [spacer, noteCount, spacer, composeButton]
+        let noteCount = UIBarButtonItem(title: "\(notes.count) Notes", style: .done, target: nil, action: nil)
+        let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+        toolbarItems = [spacer, noteCount, spacer, composeButton]
     }
     
     //MARK: - Private Methods
@@ -55,6 +55,16 @@ class NotesTableViewController: UITableViewController {
             } catch {
                 print("Could not load data")
             }
+        }
+    }
+    
+    func save() {
+        let jsonEncoder = JSONEncoder()
+        
+        if let savedData = try? jsonEncoder.encode(notes) {
+            UserDefaults.standard.set(savedData, forKey: "notes")
+        } else {
+            print("Could not save data")
         }
     }
     
@@ -78,7 +88,9 @@ class NotesTableViewController: UITableViewController {
                 let rangeOfString = range.upperBound ..< note.text.endIndex
                 let subtitle = String(note.text[rangeOfString])
                 cell.detailTextLabel?.text = "\(subDate)   \(subtitle)"
-        }
+            } else {
+                cell.detailTextLabel?.text = "\(subDate)   No additional text"
+            }
         }
 
         // Configure the cell...
@@ -97,34 +109,22 @@ class NotesTableViewController: UITableViewController {
 
     }
 
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
 
-    /*
+    
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
+            notes.remove(at: indexPath.row)
+            save()
             tableView.deleteRows(at: [indexPath], with: .fade)
+            
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
     }
-    */
+    
 
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
 
     
     // MARK: - Navigation
