@@ -22,8 +22,7 @@ class DetailViewController: UIViewController, UITextViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.isToolbarHidden = false
-        print(notes.count)
-
+        navigationController?.navigationBar.prefersLargeTitles = false
         
         let composeButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(compose))
         let deleteNoteButton = UIBarButtonItem(image: UIImage(systemName: "trash"), style:.done, target: self, action: #selector(deleteNote))
@@ -32,19 +31,23 @@ class DetailViewController: UIViewController, UITextViewDelegate {
         
         if viewingExistingNote {
             textView.text = note.text
-
+            
         }
+        
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillShowNotification, object: nil)
         
     }
     
-
+    
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         saveNote()
     }
     
-
+    
     
     
     //MARK: - Private Methods
@@ -100,6 +103,27 @@ class DetailViewController: UIViewController, UITextViewDelegate {
             print("Could not save data")
         }
     }
+    
+    @objc func adjustForKeyboard(notification: Notification) {
+         guard let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+         
+         let keyboardScreenEndFrame = keyboardValue.cgRectValue
+         // Convert frame from size of screen which will now be the correct size of the kyboard
+         let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
+         
+         //Check if we are hiding
+         if notification.name == UIResponder.keyboardWillHideNotification {
+             textView.contentInset = .zero
+         } else {
+             textView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height - view.safeAreaInsets.bottom, right: 0)
+         }
+         
+         textView.scrollIndicatorInsets = textView.contentInset
+         
+         //Make scroll view scroll down to show what user has just tapped on
+         let selectedRange = textView.selectedRange
+         textView.scrollRangeToVisible(selectedRange)
+     }
     
     
     //MARK: - Action Methods
