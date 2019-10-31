@@ -20,11 +20,10 @@ class NotesTableViewController: UITableViewController {
         navigationController?.isToolbarHidden = false
         title = "Notes"
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.toolbar.tintColor = .systemYellow
+        navigationController?.navigationBar.tintColor = .systemYellow
         
         loadSavedNotes()
-
-        
- 
     }
     
     override func viewDidAppear(_ animated: Bool) {

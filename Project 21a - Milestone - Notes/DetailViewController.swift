@@ -21,6 +21,7 @@ class DetailViewController: UIViewController, UITextViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         navigationController?.isToolbarHidden = false
         navigationController?.navigationBar.prefersLargeTitles = false
         
@@ -55,7 +56,17 @@ class DetailViewController: UIViewController, UITextViewDelegate {
     fileprivate func saveNote() {
         if viewingExistingNote {
             //filter the notes array locating note with matching ID, set its text to new text and save.
-            notes.filter({$0.id == note.id}).first?.text = textView.text
+            let editedNote = notes.filter({$0.id == note.id}).first
+            if let editedNote =  editedNote {
+                editedNote.text = textView.text
+                
+                if let range = textView.text.range(of: "\n") {
+                let rangeOfString = textView.text.startIndex ..< range.upperBound
+                let title = String(textView.text[rangeOfString])
+                
+                editedNote.title = title
+                }
+            }
             save()
             
         } else if viewingExistingNote == false && !textView.text.isEmpty {
